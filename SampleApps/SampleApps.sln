@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31919.166
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApps", "SampleApps\SampleApps.csproj", "{75F25335-56DB-4122-9733-66483CAE19E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailSender.Core", "EmailSender.Core\EmailSender.Core.csproj", "{DDEE4945-D58D-4966-95AF-684621EBCDBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailSender.Core", "EmailSender.Core\EmailSender.Core.csproj", "{DDEE4945-D58D-4966-95AF-684621EBCDBC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailSender.Core.Test", "EmailSender.Core.Test\EmailSender.Core.Test.csproj", "{EFE75ABB-ECCA-49C4-AE9D-8C9F24D8AEF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailSender.Core.Test", "EmailSender.Core.Test\EmailSender.Core.Test.csproj", "{EFE75ABB-ECCA-49C4-AE9D-8C9F24D8AEF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{75F25335-56DB-4122-9733-66483CAE19E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{75F25335-56DB-4122-9733-66483CAE19E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{75F25335-56DB-4122-9733-66483CAE19E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{75F25335-56DB-4122-9733-66483CAE19E5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DDEE4945-D58D-4966-95AF-684621EBCDBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DDEE4945-D58D-4966-95AF-684621EBCDBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDEE4945-D58D-4966-95AF-684621EBCDBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
