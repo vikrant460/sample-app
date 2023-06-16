@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DDDExamples\DDDExamples.csproj" />
     <ProjectReference Include="..\EmailSender.Core\EmailSender.Core.csproj" />
   </ItemGroup>
 
