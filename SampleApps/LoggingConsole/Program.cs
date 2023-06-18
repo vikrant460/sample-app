@@ -2,5 +2,6 @@
 using Logging.Core;
 
 Console.WriteLine("Hello, World!");
-Logger.LogError("This is an error");
+var errorDetails = new LogDetail { Error = "Some error happened" };
+Logger.LogError(errorDetails);
 Console.Read();

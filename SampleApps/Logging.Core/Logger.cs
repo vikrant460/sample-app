@@ -1,22 +1,16 @@
 ﻿using Serilog;
 using Serilog.Sinks.MSSqlServer;
-using System;
-using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Serilog.Events;
+using System.Collections.ObjectModel;
+using System.Data;
 
 namespace Logging.Core
 {
     public static class Logger
     {
         private static readonly ILogger _errorLogger;
-        private const string _connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=MyAppDB;Integrated Security=SSPI;Encrypt=False;";
-        private const string _schemaName = "dbo";
-        private const string _tableName = "LogEvents";
-
+        
         static Logger()
         {
             var appSettings = new ConfigurationBuilder()
@@ -26,41 +20,58 @@ namespace Logging.Core
            
             var connectionString = appSettings.GetConnectionString("dbserver");
             var tableName = appSettings.GetConnectionString("logtable");
-            Log.Logger = new LoggerConfiguration().WriteTo
-                .MSSqlServer(
-                    connectionString: connectionString,
-                    sinkOptions: new MSSqlServerSinkOptions
-                    {
-                        TableName = tableName,
-                        AutoCreateSqlTable = true
-                    },
-                    restrictedToMinimumLevel: LogEventLevel.Debug,
-                    formatProvider: null,
-                    columnOptions: null,
-                    logEventFormatter: null)
-                .CreateLogger();
-            //BELOW WORKS
-            //Log.Logger = new LoggerConfiguration().WriteTo
-            //    .MSSqlServer(
-            //        connectionString: _connectionString,
-            //        sinkOptions: new MSSqlServerSinkOptions
-            //        {
-            //            TableName = _tableName,
-            //            SchemaName = _schemaName,
-            //            AutoCreateSqlTable = true
-            //        },
-            //        restrictedToMinimumLevel: LogEventLevel.Debug,
-            //        formatProvider: null,
-            //        columnOptions: null,
-            //        logEventFormatter: null)
-            //    .CreateLogger();
 
-            _errorLogger = Log.Logger; 
+            var columnOptions = BuildColumnOptions();
+
+            var mssqlSinkOptions = new MSSqlServerSinkOptions
+            {
+                AutoCreateSqlTable = true,
+                TableName = tableName
+            };
+
+            var logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.MSSqlServer(connectionString,
+                    mssqlSinkOptions,
+                    columnOptions: BuildColumnOptions(),
+                    restrictedToMinimumLevel: LogEventLevel.Error
+                ).CreateLogger();
+            _errorLogger = logger; 
         }
 
-        public static void LogError(string message)
+        public static void LogError(LogDetail details)
         {
-            _errorLogger.Error(message);
+            _errorLogger.Error("{ProcessName}{MachineName}{Error}", details.ProcessName, details.MachineName, details.Error);
+        }
+
+        private static ColumnOptions BuildColumnOptions()
+        {
+            var columnOptions = new ColumnOptions
+            {
+                TimeStamp =
+                {
+                    ColumnName = "TimeStampUTC",
+                    ConvertToUtc = true,
+                },
+
+                AdditionalColumns = new Collection<SqlColumn>
+                {
+                    new SqlColumn { DataType = SqlDbType.NVarChar, ColumnName = "MachineName" },
+                    new SqlColumn { DataType = SqlDbType.NVarChar, ColumnName = "ProcessName" },
+                    new SqlColumn { DataType = SqlDbType.NVarChar, ColumnName = "Error" },
+
+                }
+            };
+
+            columnOptions.Store.Remove(StandardColumn.Properties);
+            columnOptions.Store.Remove(StandardColumn.MessageTemplate);
+            columnOptions.Store.Remove(StandardColumn.Message);
+            columnOptions.Store.Remove(StandardColumn.Id);
+            columnOptions.Store.Remove(StandardColumn.Level);
+            columnOptions.Store.Remove(StandardColumn.Exception);
+            columnOptions.Store.Remove(StandardColumn.LogEvent);
+
+            return columnOptions;
         }
     }
 }
