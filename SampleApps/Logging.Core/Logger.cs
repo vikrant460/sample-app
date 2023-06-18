@@ -25,7 +25,7 @@ namespace Logging.Core
 
             var mssqlSinkOptions = new MSSqlServerSinkOptions
             {
-                AutoCreateSqlTable = true,
+                AutoCreateSqlTable = false,
                 TableName = tableName
             };
 
@@ -33,7 +33,7 @@ namespace Logging.Core
                 .Enrich.FromLogContext()
                 .WriteTo.MSSqlServer(connectionString,
                     mssqlSinkOptions,
-                    columnOptions: BuildColumnOptions(),
+                    columnOptions: columnOptions,
                     restrictedToMinimumLevel: LogEventLevel.Error
                 ).CreateLogger();
             _errorLogger = logger; 
@@ -41,24 +41,20 @@ namespace Logging.Core
 
         public static void LogError(LogDetail details)
         {
-            _errorLogger.Error("{ProcessName}{MachineName}{Error}", details.ProcessName, details.MachineName, details.Error);
+            _errorLogger.Error("{Time}{ProcessName}{MachineName}{Error}", details.TimeStamp,details.ProcessName, details.MachineName, details.Error);
         }
 
         private static ColumnOptions BuildColumnOptions()
         {
             var columnOptions = new ColumnOptions
             {
-                TimeStamp =
-                {
-                    ColumnName = "TimeStampUTC",
-                    ConvertToUtc = true,
-                },
 
                 AdditionalColumns = new Collection<SqlColumn>
                 {
                     new SqlColumn { DataType = SqlDbType.NVarChar, ColumnName = "MachineName" },
                     new SqlColumn { DataType = SqlDbType.NVarChar, ColumnName = "ProcessName" },
                     new SqlColumn { DataType = SqlDbType.NVarChar, ColumnName = "Error" },
+                    new SqlColumn { DataType = SqlDbType.DateTime, ColumnName = "Time"}
 
                 }
             };
@@ -70,6 +66,7 @@ namespace Logging.Core
             columnOptions.Store.Remove(StandardColumn.Level);
             columnOptions.Store.Remove(StandardColumn.Exception);
             columnOptions.Store.Remove(StandardColumn.LogEvent);
+            columnOptions.Store.Remove(StandardColumn.TimeStamp);
 
             return columnOptions;
         }

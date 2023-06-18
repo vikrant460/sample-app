@@ -9,7 +9,7 @@ namespace Logging.Core
             
         }
 
-        public DateTime TimeStamp { get; private set; }
+        public DateTime TimeStamp => DateTime.UtcNow;
         public string Error { get; set; } 
         public string MachineName => Environment.MachineName;
         public string ProcessName => Process.GetCurrentProcess().ProcessName;
